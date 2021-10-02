@@ -1,0 +1,14 @@
+#!/bin/bash
+
+export GIT_TOPLEVEL="$(git rev-parse --show-toplevel)"
+export PROJECT_DIR="${CI_PROJECT_DIR:-${GIT_TOPLEVEL}}"
+export PIP_CACHE_DIR="${PROJECT_DIR}/.cache/pip"
+export PATH="${HOME}/.local/bin:${PATH}"
+
+(
+  cd "${PROJECT_DIR}" &&
+  pip install --user --quiet virtualenv &&
+  virtualenv venv &&
+  source venv/bin/activate &&
+  pip install -q coverage pylint pytest pytest-cov
+)

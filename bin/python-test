@@ -1,0 +1,12 @@
+#!/bin/bash
+
+export GIT_TOPLEVEL="$(git rev-parse --show-toplevel)"
+export PROJECT_DIR="${CI_PROJECT_DIR:-${GIT_TOPLEVEL}}"
+export PATH="${HOME}/.local/bin:${PATH}"
+
+(
+  cd "${PROJECT_DIR}" &&
+  source venv/bin/activate &&
+  pytest --junitxml="pytest.xml" --cov=python --cov-branch ./python/
+  coverage xml --omit='*_test.py' -o python-coverage.xml
+)

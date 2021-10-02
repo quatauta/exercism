@@ -1,0 +1,17 @@
+#!/bin/bash
+
+export GIT_TOPLEVEL="$(git rev-parse --show-toplevel)"
+export PROJECT_DIR="${CI_PROJECT_DIR:-${GIT_TOPLEVEL}}"
+
+find "${PROJECT_DIR}/elixir" -mindepth 1 -maxdepth 1 -type d |
+sort |
+while read -r TESTCASE ; do
+  (
+    echo "${TESTCASE}"
+    cd "${TESTCASE}" &&
+    find . -maxdepth 1 -iname "mix.exs" -print0 |
+    xargs -0rt -IPROJECT sh -c 'mix credo --format oneline' || exit 1
+    echo
+  )
+done
+
