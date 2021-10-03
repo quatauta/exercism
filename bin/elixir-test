@@ -27,9 +27,8 @@ while read -r TESTCASE ; do
   )
 done
 
-find elixir/*/_build/test/lib/*/ -iname "test-junit-report.xml" |
+find "${PROJECT_DIR}"/.cache/elixir/build/test/lib -iname "test-junit-report.xml" |
 while read -r REPORT ; do
-  EXERCISE_HOME="${REPORT%/_build/test/lib/*/test-junit-report.xml}" ;
-  sed -i -e "s_file=\"test/_file=\"${EXERCISE_HOME}/test/_g" \
-         -e 's_\(\.exs\):\([0-9]\+\)_\1#L\2_g' "${REPORT}" ;
+  EXERCISE="$(basename "$(dirname "${REPORT}")")"
+  sed -E -e "s!file=\"test/!file=\"${EXERCISE}/test/!g" -e 's!(\.exs):([0-9]+)!\1#L\2!g' -i "__" "${REPORT}" ;
 done
