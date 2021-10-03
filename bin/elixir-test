@@ -15,20 +15,9 @@ if [ -z "${PROJECT_DIR}" ] ; then
   fi
 fi
 
-find "${PROJECT_DIR}/elixir" -mindepth 1 -maxdepth 1 -type d |
-sort |
-while read -r TESTCASE ; do
-  (
-    echo "${TESTCASE}"
-    cd "${TESTCASE}" &&
-    find . -maxdepth 1 -iname "mix.exs" -print0 |
-    xargs -0rt -IPROJECT sh -c 'mix test' || exit 1
-    echo
-  )
-done
-
-find "${PROJECT_DIR}"/.cache/elixir/build/test/lib -iname "test-junit-report.xml" |
-while read -r REPORT ; do
-  EXERCISE="$(basename "$(dirname "${REPORT}")")"
-  sed -i".bak" -E -e "s!file=\"test/!file=\"${EXERCISE}/test/!g" -e 's!(\.exs):([0-9]+)!\1#L\2!g' "${REPORT}" ;
-done
+(
+  cd "${PROJECT_DIR}/elixir" || exit 1
+  mix credo --format oneline
+  mix test || exit 1
+  # sed -i".bak" -E -e 's/(\.exs):([0-9]+)/\1#L\2/g' "_build/test/lib/excercism/test-junit-report.xml"
+)
