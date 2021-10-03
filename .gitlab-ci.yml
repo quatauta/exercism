@@ -21,7 +21,7 @@ elixir:
       - elixir/*/deps/
   artifacts:
     reports:
-      junit: ./elixir/*/_build/test/lib/*/test-junit-report.xml
+      junit: ./.cache/elixir/build/test/lib/*/test-junit-report.xml
   script:
     - source .gitlab/ci.sh
     - for CMD in setup lint test ; do ci_section "elixir-${CMD}" "bin/elixir-${CMD}" ; done
