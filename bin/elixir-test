@@ -30,5 +30,5 @@ done
 find "${PROJECT_DIR}"/.cache/elixir/build/test/lib -iname "test-junit-report.xml" |
 while read -r REPORT ; do
   EXERCISE="$(basename "$(dirname "${REPORT}")")"
-  sed -E -e "s!file=\"test/!file=\"${EXERCISE}/test/!g" -e 's!(\.exs):([0-9]+)!\1#L\2!g' -i "__" "${REPORT}" ;
+  sed -i".bak" -E -e "s!file=\"test/!file=\"${EXERCISE}/test/!g" -e 's!(\.exs):([0-9]+)!\1#L\2!g' "${REPORT}" ;
 done
