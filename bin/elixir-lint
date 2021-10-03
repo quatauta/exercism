@@ -1,7 +1,19 @@
-#!/bin/bash
+#!/bin/sh
 
-export GIT_TOPLEVEL="$(git rev-parse --show-toplevel)"
-export PROJECT_DIR="${CI_PROJECT_DIR:-${GIT_TOPLEVEL}}"
+PROJECT_DIR="${CI_PROJECT_DIR}"
+
+if [ -z "${PROJECT_DIR}" ] ; then
+  if [ -z "$(command -v git)" ] ; then
+    PROJECT_DIR="$(git rev-parse --show-toplevel)"
+  else
+    for LEVEL_UP in "." ".." "../.." "../../../" ; do
+      if [ -r "${LEVEL_UP}/LICENSE" ] ; then
+        PROJECT_DIR="${LEVEL_UP}"
+        break
+      fi
+    done
+  fi
+fi
 
 find "${PROJECT_DIR}/elixir" -mindepth 1 -maxdepth 1 -type d |
 sort |
@@ -14,4 +26,3 @@ while read -r TESTCASE ; do
     echo
   )
 done
-
